@@ -1,0 +1,17 @@
+services:
+  docs:
+    image: recsa_challenge_local_docs
+    container_name: recsa_challenge_local_docs
+    build:
+      context: .
+      dockerfile: ./compose/local/docs/Dockerfile
+    env_file:
+      - ./.envs/.local/.django
+    volumes:
+      - /app/.venv
+      - ./docs:/docs:z
+      - ./config:/app/config:z
+      - ./recsa_challenge:/app/recsa_challenge:z
+    ports:
+      - '9000:9000'
+    command: /start-docs

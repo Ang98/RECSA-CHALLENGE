@@ -1,0 +1,63 @@
+# --- SISTEMA OPERATIVO & IDEs ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# --- PYTHON / DJANGO (Backend) ---
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ctypes
+*.so
+
+# Base de datos local (si usaras sqlite fuera de docker)
+*.sqlite3
+db.sqlite3
+
+# Entornos Virtuales (Tu petición específica y variantes comunes)
+backend/.venv/
+.venv/
+venv/
+env/
+ENV/
+
+
+# Media files (Archivos subidos por usuarios en desarrollo)
+backend/media/
+media/
+
+# Static files (Archivos recolectados)
+backend/staticfiles/
+staticfiles/
+
+# --- NODE / REACT (Frontend) ---
+# Dependencias (Tu petición específica)
+node_modules/
+frontend/node_modules/
+
+# Builds de producción
+dist/
+build/
+frontend/dist/
+
+# Logs de debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Directorios de coverage de tests
+coverage/
+
+# --- DOCKER ---
+# Si tuvieras volúmenes locales mapeados, irían aquí.
+# Generalmente no se ignora el docker-compose ni los Dockerfiles.
+
+# --- OTROS ---
+# Archivos temporales o de backups
+*.bak
+*.tmp
