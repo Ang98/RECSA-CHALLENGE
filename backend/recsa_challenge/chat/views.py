@@ -1,17 +1,44 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .service import OpenAIService
+from django.utils import timezone
+from recsa_challenge.chat.service import OpenAIService
 
 class ChatAPIView(APIView):
     def post(self, request):
         user_message = request.data.get('message')
-        history = request.data.get('history', []) # Historial previo del frontend
+        history = request.data.get('history', []) 
         
-        # Construimos el formato de mensajes para OpenAI
-        # System prompt: Define la personalidad
-        messages = [{"role": "system", "content": "Eres un asistente médico útil de RECSA. Ayudas a agendar, consultar y cancelar citas."}]
+        # 2. Obtenemos la fecha y hora actual real
+        now = timezone.now()
+        current_date = now.strftime("%Y-%m-%d")
+        current_time = now.strftime("%H:%M")
+
+        # 3. Definimos el "Cerebro" del bot con reglas estrictas
+        system_prompt = f"""
+        Eres un asistente médico virtual útil y profesional de RECSA.
         
-        # Agregamos historial previo (limitado a últimos 10 mensajes para no gastar tokens)
+        INFORMACIÓN DE CONTEXTO:
+        - Fecha actual: {current_date}
+        - Hora actual: {current_time}
+        
+        REGLAS CRÍTICAS DE FUNCIONAMIENTO (SÍGUELAS ESTRICTAMENTE):
+
+        1. **NUNCA INVENTES UN ID:** Si el usuario te pide modificar o cancelar una cita y NO te ha dado el ID explícitamente, ESTÁ PROHIBIDO adivinar un número (como 1, 100, etc.).
+        
+        2. **FLUJO OBLIGATORIO PARA MODIFICAR/ELIMINAR:**
+           - Si el usuario dice "cancela la cita de Juan", PRIMERO debes ejecutar la herramienta `get_appointments` filtrando por el nombre "Juan".
+           - Analiza la respuesta de esa herramienta para encontrar el `id` real de la cita.
+           - SOLO ENTONCES, ejecuta `cancel_appointment` o `update_appointment` usando ese `id` real que encontraste.
+
+        3. **FECHAS RELATIVAS:** Si el usuario dice "mañana", calcula la fecha basándote en que hoy es {current_date}.
+        
+        4. **RESPUESTAS:** Sé amable, confirma las acciones y si hay error, explícalo claramente.
+        """
+
+        # Construimos la lista de mensajes
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        # Agregamos historial previo (limitado a últimos 10 para ahorrar tokens)
         messages.extend(history[-10:])
         
         # Agregamos el mensaje actual
